@@ -40,12 +40,16 @@ async function main() {
     const fearAndGreedData = await fetchFearAndGreedIndex();
 
     let widget = new ListWidget();
-    widget.backgroundColor = new Color("#575656");
+    let startColor = new Color("#000000");
+    let endColor = new Color("#ffffff");
+    let gradient = new LinearGradient();
+    gradient.colors = [startColor, endColor];
+    widget.backgroundGradient = gradient;
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'Fear and Greed Index:', 24, 'bold', 'white');
-    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 32, 'bold', fearAndGreedColor);
+    createStyledText(widget, 'Fear and Greed Index:', 18, 'bold', 'white');
+    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 28, 'bold', fearAndGreedColor);
     widget.addSpacer();
 
     Script.setWidget(widget);
