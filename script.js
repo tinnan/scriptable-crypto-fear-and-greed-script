@@ -41,9 +41,10 @@ async function main() {
 
     let widget = new ListWidget();
     let startColor = new Color("#000000");
-    let endColor = new Color("#ffffff");
+    let endColor = new Color("#1c2d61");
     let gradient = new LinearGradient();
     gradient.colors = [startColor, endColor];
+    gradient.locations = [0, 1];
     widget.backgroundGradient = gradient;
 
     // Fear and Greed Index
