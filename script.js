@@ -12,20 +12,20 @@ async function fetchFearAndGreedIndex() {
     }
 }
 
-// License: MIT - https://opensource.org/licenses/MIT
-// Author: Michele Locati <michele@locati.it>
-// Source: https://gist.github.com/mlocati/7210513
 function perc2color(perc) {
 	var r, g, b = 0;
+  const colorScaleCap = 200;
+  const half = 50;
 	if(perc < 50) {
-		r = 255;
-		g = Math.round(5.1 * perc);
+		r = colorScaleCap;
+		g = Math.round(colorScaleCap / half * perc);
 	}
 	else {
-		g = 255;
-		r = Math.round(510 - 5.10 * perc);
+		g = colorScaleCap;
+		r = Math.round((colorScaleCap / half * 100) - (colorScaleCap / half) * perc);
 	}
 	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+  console.log("h: ", h, "r: ", r * 0x10000, "g: ", 0x100 + b, "b: ", b * 0x1);
 	return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
@@ -40,11 +40,11 @@ async function main() {
     const fearAndGreedData = await fetchFearAndGreedIndex();
 
     let widget = new ListWidget();
-    widget.backgroundColor = new Color("#1A1A1A");
+    widget.backgroundColor = new Color("#575656");
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'Fear and Greed Index:', 20, 'bold', '#34D399');
+    createStyledText(widget, 'Fear and Greed Index:', 24, 'bold', 'white');
     createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 32, 'bold', fearAndGreedColor);
     widget.addSpacer();
 
