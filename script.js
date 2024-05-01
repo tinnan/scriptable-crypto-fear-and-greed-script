@@ -12,14 +12,21 @@ async function fetchFearAndGreedIndex() {
     }
 }
 
-function getIndexNumberColor(value) {
-    if (value >= 75) { // Greed
-        return "#34D399"; // Green
-    } else if (value <= 25) { // Fear
-        return "#EF4444"; // Red
-    } else {
-        return "white"; // Neutral
-    }
+// License: MIT - https://opensource.org/licenses/MIT
+// Author: Michele Locati <michele@locati.it>
+// Source: https://gist.github.com/mlocati/7210513
+function perc2color(perc) {
+	var r, g, b = 0;
+	if(perc < 50) {
+		r = 255;
+		g = Math.round(5.1 * perc);
+	}
+	else {
+		g = 255;
+		r = Math.round(510 - 5.10 * perc);
+	}
+	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+	return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
 function createStyledText(widget, text, size, weight = 'regular', color = 'white') {
@@ -36,7 +43,7 @@ async function main() {
     widget.backgroundColor = new Color("#1A1A1A");
 
     // Fear and Greed Index
-    const fearAndGreedColor = getIndexNumberColor(parseInt(fearAndGreedData.value));
+    const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
     createStyledText(widget, 'Fear and Greed Index:', 20, 'bold', '#34D399');
     createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 32, 'bold', fearAndGreedColor);
     widget.addSpacer();
