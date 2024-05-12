@@ -13,7 +13,13 @@ async function fetchBitcoinPrice() {
 }
 
 function reformatRate(rateString) {
-    return Number(rateString.replaceAll(',', '')).toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+    const options = {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+    };
+    return Number(rateString.replaceAll(',', '')).toLocaleString(undefined, options);
+}
 
 function toLocalDateString(isoDate) {
     const d = new Date(isoDate);
@@ -25,7 +31,7 @@ function toLocalDateString(isoDate) {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        timeZoneName: 'short'
+        timeZoneName: 'short',
     };
     return d.toLocaleString('en-US', options);
 }
@@ -45,20 +51,19 @@ async function fetchFearAndGreedIndex() {
 }
 
 function perc2color(perc) {
-	var r, g, b = 0;
-  const colorScaleCap = 200;
-  const half = 50;
-	if(perc < 50) {
-		r = colorScaleCap;
-		g = Math.round(colorScaleCap / half * perc);
-	}
-	else {
-		g = colorScaleCap;
-		r = Math.round((colorScaleCap / half * 100) - (colorScaleCap / half) * perc);
-	}
-	var h = r * 0x10000 + g * 0x100 + b * 0x1;
-  console.log("h: ", h, "r: ", r * 0x10000, "g: ", 0x100 + b, "b: ", b * 0x1);
-	return '#' + ('000000' + h.toString(16)).slice(-6);
+    var r, g, b = 0;
+    const colorScaleCap = 200;
+    const half = 50;
+    if(perc < 50) {
+        r = colorScaleCap;
+        g = Math.round(colorScaleCap / half * perc);
+    }
+    else {
+        g = colorScaleCap;
+        r = Math.round((colorScaleCap / half * 100) - (colorScaleCap / half) * perc);
+    }
+    var h = r * 0x10000 + g * 0x100 + b * 0x1;
+    return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
 function createStyledText(widget, text, size, weight = 'regular', color = 'white') {
@@ -82,12 +87,12 @@ async function main() {
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'FnG Index:', 16, 'bold', '#ffffff');
-    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 20, 'bold', fearAndGreedColor);
+    createStyledText(widget, 'FnG Index:', 14, 'bold', '#ffffff');
+    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 16, 'bold', fearAndGreedColor);
     widget.addSpacer();
     // Bitcoin Price
-    createStyledText(widget, 'BTC price:', 16, 'bold', '#ffffff');
-    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 20, 'bold', '#F2A900');
+    createStyledText(widget, 'BTC price:', 14, 'bold', '#ffffff');
+    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 16, 'bold', '#F2A900');
     createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 12, 'bold', '#F2A900');
     widget.addSpacer();
 
