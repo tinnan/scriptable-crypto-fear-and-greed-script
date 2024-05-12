@@ -1,3 +1,32 @@
+async function fetchBitcoinPrice() {
+    try {
+        let request = new Request("https://api.coindesk.com/v1/bpi/currentprice/BTC.json");
+        let response = await request.loadJSON();
+        return {
+          rate: response.bpi.USD.rate,
+          updatedTimeLocal: toLocalDateString(response.time.updatedISO)
+        };
+    } catch (error) {
+        console.error("Failed to fetch Bitcoin price:", error);
+        return { rate: "Not available", updatedTime: "" };
+    }
+}
+
+function toLocalDateString(isoDate) {
+    const d = new Date(isoDate);
+    const options = {
+        year: 'numeric',
+        month: 'short',
+	day: 'numeric',
+	hourCycle: 'h24',
+	hour: '2-digit',
+	minute: '2-digit',
+	second: '2-digit',
+	timeZoneName: 'short'
+    };
+    return d.toLocaleString('en-TH', options);
+}
+
 async function fetchFearAndGreedIndex() {
     try {
         let request = new Request("https://api.alternative.me/fng/");
@@ -37,7 +66,8 @@ function createStyledText(widget, text, size, weight = 'regular', color = 'white
 }
 
 async function main() {
-    const fearAndGreedData = await fetchFearAndGreedIndex();
+    const [bitcoinPriceData, fearAndGreedData] = Promise.allSettled([fetchBitcoinPrice(), fetchFearAndGreedIndex()])
+	    .then(results => results.map(r => r.value));
 
     let widget = new ListWidget();
     let startColor = new Color("#000000");
@@ -49,8 +79,13 @@ async function main() {
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'Fear and Greed Index:', 18, 'bold', 'white');
-    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 28, 'bold', fearAndGreedColor);
+    createStyledText(widget, 'FnG Index:', 18, 'bold', 'white');
+    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 16, 'bold', fearAndGreedColor);
+    widget.addSpacer();
+    // Bitcoin Price
+    createStyledText(widget, 'BTC price:', 18, 'bold', 'white');
+    createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 16, 'bold', '#F2A900');
+    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 16, 'bold', '#F2A900');
     widget.addSpacer();
 
     Script.setWidget(widget);
