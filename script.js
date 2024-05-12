@@ -66,10 +66,11 @@ function perc2color(perc) {
     return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
-function createStyledText(widget, text, size, weight = 'regular', color = 'white') {
+function createStyledText(widget, text, size, weight = 'regular', color = '#ffffff', lineLimit = 0) {
     let textElement = widget.addText(text);
     textElement.textColor = new Color(color);
     textElement.font = new Font(weight, size);
+    textElement.lineLimit = lineLimit;
     return textElement;
 }
 
@@ -93,7 +94,7 @@ async function main() {
     // Bitcoin Price
     createStyledText(widget, 'BTC price:', 14, 'bold', '#ffffff');
     createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 16, 'bold', '#F2A900');
-    createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 12, 'bold', '#F2A900');
+    createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 12, 'bold', '#F2A900', 2);
     widget.addSpacer();
 
     Script.setWidget(widget);
