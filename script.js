@@ -3,8 +3,8 @@ async function fetchBitcoinPrice() {
         let request = new Request("https://api.coindesk.com/v1/bpi/currentprice/BTC.json");
         let response = await request.loadJSON();
         return {
-          rate: reformatRate(response.bpi.USD.rate),
-          updatedTimeLocal: toLocalDateString(response.time.updatedISO)
+          rate: response.bpi.USD.rate,
+          updatedTimeLocal: response.time.updatedISO,
         };
     } catch (error) {
         console.error("Failed to fetch Bitcoin price:", error);
@@ -14,26 +14,35 @@ async function fetchBitcoinPrice() {
 
 function reformatRate(rateString) {
     const options = {
-        style: 'currency',
-        currency: 'USD',
+        style: 'decimal',
         maximumFractionDigits: 0,
     };
     return Number(rateString.replaceAll(',', '')).toLocaleString(undefined, options);
 }
 
-function toLocalDateString(isoDate) {
-    const d = new Date(isoDate);
+function formatLocalDateTime(isoDateString, options) {
+    const d = new Date(isoDateString);
+    return d.toLocaleString('en-US', options);
+}
+
+function toLocalDateString(isoDateString) {
     const options = {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
+    };
+    return formatLocalDateTime(isoDateString, options);
+}
+
+function toLocalTimeString(isoDateString) {
+    const options = {
         hourCycle: 'h24',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
         timeZoneName: 'short',
     };
-    return d.toLocaleString('en-US', options);
+    return formatLocalDateTime(isoDateString, options);
 }
 
 async function fetchFearAndGreedIndex() {
@@ -66,11 +75,10 @@ function perc2color(perc) {
     return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
-function createStyledText(widget, text, size, weight = 'regular', color = '#ffffff', lineLimit = 0) {
+function createStyledText(widget, text, size, color = '#ffffff') {
     let textElement = widget.addText(text);
     textElement.textColor = new Color(color);
-    textElement.font = new Font(weight, size);
-    textElement.lineLimit = lineLimit;
+    textElement.font = new Font('Sarabun', size);
     return textElement;
 }
 
@@ -88,14 +96,14 @@ async function main() {
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'FnG Index:', 14, 'bold', '#ffffff');
-    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 16, 'bold', fearAndGreedColor);
+    createStyledText(widget, 'FnG Index:', 14, '#ffffff');
+    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 24, fearAndGreedColor);
     widget.addSpacer();
     // Bitcoin Price
-    createStyledText(widget, 'BTC price:', 14, 'bold', '#ffffff');
-    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 16, 'bold', '#F2A900');
-    createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 12, 'bold', '#F2A900', 2);
-    widget.addSpacer();
+    createStyledText(widget, 'BTC price:', 14, '#ffffff');
+    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 18, '#F2A900');
+    createStyledText(widget, toLocalDateString(bitcoinPriceData.updatedTimeLocal), 12, '#F2A900');
+    createStyledText(widget, toLocalTimeString(bitcoinPriceData.updatedTimeLocal), 12, '#F2A900');
 
     Script.setWidget(widget);
     Script.complete();
