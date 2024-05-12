@@ -3,7 +3,7 @@ async function fetchBitcoinPrice() {
         let request = new Request("https://api.coindesk.com/v1/bpi/currentprice/BTC.json");
         let response = await request.loadJSON();
         return {
-          rate: response.bpi.USD.rate,
+          rate: reformatRate(response.bpi.USD.rate),
           updatedTimeLocal: toLocalDateString(response.time.updatedISO)
         };
     } catch (error) {
@@ -11,6 +11,9 @@ async function fetchBitcoinPrice() {
         return { rate: "Not available", updatedTime: "" };
     }
 }
+
+function reformatRate(rateString) {
+    return Number(rateString.replaceAll(',', '')).toLocaleString(undefined, { style: 'currency', currency: 'USD' });
 
 function toLocalDateString(isoDate) {
     const d = new Date(isoDate);
