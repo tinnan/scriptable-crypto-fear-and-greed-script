@@ -17,14 +17,14 @@ function toLocalDateString(isoDate) {
     const options = {
         year: 'numeric',
         month: 'short',
-	day: 'numeric',
-	hourCycle: 'h24',
-	hour: '2-digit',
-	minute: '2-digit',
-	second: '2-digit',
-	timeZoneName: 'short'
+        day: 'numeric',
+        hourCycle: 'h24',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
     };
-    return d.toLocaleString('en-TH', options);
+    return d.toLocaleString('en-US', options);
 }
 
 async function fetchFearAndGreedIndex() {
@@ -66,7 +66,7 @@ function createStyledText(widget, text, size, weight = 'regular', color = 'white
 }
 
 async function main() {
-    const [bitcoinPriceData, fearAndGreedData] = Promise.allSettled([fetchBitcoinPrice(), fetchFearAndGreedIndex()])
+    const [bitcoinPriceData, fearAndGreedData] = await Promise.allSettled([fetchBitcoinPrice(), fetchFearAndGreedIndex()])
 	    .then(results => results.map(r => r.value));
 
     let widget = new ListWidget();
@@ -79,13 +79,12 @@ async function main() {
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'FnG Index:', 18, 'bold', 'white');
-    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 16, 'bold', fearAndGreedColor);
-    widget.addSpacer();
+    createStyledText(widget, 'FnG Index:', 16, 'bold', '#ffffff');
+    createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 20, 'bold', fearAndGreedColor);
     // Bitcoin Price
-    createStyledText(widget, 'BTC price:', 18, 'bold', 'white');
-    createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 16, 'bold', '#F2A900');
-    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 16, 'bold', '#F2A900');
+    createStyledText(widget, 'BTC price:', 16, 'bold', '#ffffff');
+    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 20, 'bold', '#F2A900');
+    createStyledText(widget, `${bitcoinPriceData.updatedTimeLocal}`, 12, 'bold', '#F2A900');
     widget.addSpacer();
 
     Script.setWidget(widget);
