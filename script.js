@@ -98,10 +98,9 @@ async function main() {
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
     createStyledText(widget, 'FnG Index:', 14, '#ffffff');
     createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 24, fearAndGreedColor);
-    widget.addSpacer();
     // Bitcoin Price
     createStyledText(widget, 'BTC price:', 14, '#ffffff');
-    createStyledText(widget, `$ ${bitcoinPriceData.rate}`, 18, '#F2A900');
+    createStyledText(widget, `$ ${reformatRate(bitcoinPriceData.rate)}`, 18, '#F2A900');
     createStyledText(widget, toLocalDateString(bitcoinPriceData.updatedTimeLocal), 12, '#F2A900');
     createStyledText(widget, toLocalTimeString(bitcoinPriceData.updatedTimeLocal), 12, '#F2A900');
 
