@@ -1,3 +1,8 @@
+const COLOR_WHITE = '#ffffff';
+const COLOR_BITCOIN_ORANGE = '#F2A900';
+const COLOR_BLACK = '#000000';
+const COLOR_DARKBLUE = '#1c2d61';
+
 async function fetchBitcoinPrice() {
     try {
         let request = new Request("https://api.coindesk.com/v1/bpi/currentprice/BTC.json");
@@ -7,8 +12,7 @@ async function fetchBitcoinPrice() {
           updatedTimeLocal: response.time.updatedISO,
         };
     } catch (error) {
-        console.error("Failed to fetch Bitcoin price:", error);
-        return { rate: "Not available", updatedTime: "" };
+        return { rate: "Unavailable", updatedTime: "" };
     }
 }
 
@@ -54,8 +58,7 @@ async function fetchFearAndGreedIndex() {
           valueText: response.data[0].value_classification
         };
     } catch (error) {
-        console.error("Failed to fetch Fear and Greed Index:", error);
-        return { value: "Not available", valueText: "" };
+        return { value: "Unavailable", valueText: "" };
     }
 }
 
@@ -75,10 +78,10 @@ function perc2color(perc) {
     return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
-function createStyledText(widget, text, size, color = '#ffffff') {
+function createStyledText(widget, text, size, color = COLOR_WHITE) {
     let textElement = widget.addText(text);
     textElement.textColor = new Color(color);
-    textElement.font = new Font('Sarabun', size);
+    textElement.font = new Font('default', size);
     return textElement;
 }
 
@@ -87,8 +90,8 @@ async function main() {
 	    .then(results => results.map(r => r.value));
 
     let widget = new ListWidget();
-    let startColor = new Color("#000000");
-    let endColor = new Color("#1c2d61");
+    let startColor = new Color(COLOR_BLACK);
+    let endColor = new Color(COLOR_DARKBLUE);
     let gradient = new LinearGradient();
     gradient.colors = [startColor, endColor];
     gradient.locations = [0, 1];
@@ -96,13 +99,13 @@ async function main() {
 
     // Fear and Greed Index
     const fearAndGreedColor = perc2color(parseInt(fearAndGreedData.value));
-    createStyledText(widget, 'FnG Index:', 14, '#ffffff');
+    createStyledText(widget, 'FnG Index:', 14, COLOR_WHITE);
     createStyledText(widget, `${fearAndGreedData.value} ${fearAndGreedData.valueText}`, 24, fearAndGreedColor);
     // Bitcoin Price
-    createStyledText(widget, 'BTC price:', 14, '#ffffff');
-    createStyledText(widget, `$ ${reformatRate(bitcoinPriceData.rate)}`, 18, '#F2A900');
-    createStyledText(widget, toLocalDateString(bitcoinPriceData.updatedTimeLocal), 12, '#F2A900');
-    createStyledText(widget, toLocalTimeString(bitcoinPriceData.updatedTimeLocal), 12, '#F2A900');
+    createStyledText(widget, 'BTC price:', 14, COLOR_WHITE);
+    createStyledText(widget, `$ ${reformatRate(bitcoinPriceData.rate)}`, 18, COLOR_BITCOIN_ORANGE);
+    createStyledText(widget, toLocalDateString(bitcoinPriceData.updatedTimeLocal), 12, COLOR_BITCOIN_ORANGE);
+    createStyledText(widget, toLocalTimeString(bitcoinPriceData.updatedTimeLocal), 12, COLOR_BITCOIN_ORANGE);
 
     Script.setWidget(widget);
     Script.complete();
